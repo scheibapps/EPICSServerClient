@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="EPICSServerClient.Views.Shell"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EPICSServerClient"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:prism="http://www.codeplex.com/prism"
+        x:Name="ShellWindow"
+        xmlns:helpers="clr-namespace:EPICSServerClient.Helpers;assembly=EPICSServerClient.Helpers"
+        mc:Ignorable="d" prism:ViewModelLocator.AutoWireViewModel="True" >
+    
+    <ContentControl Grid.Row="0" Name="ShellView" prism:RegionManager.RegionName="{x:Static helpers:RegionConstants.ShellRegion}">
+
+        </ContentControl>
+    
+</UserControl>
+
