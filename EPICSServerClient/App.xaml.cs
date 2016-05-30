@@ -16,9 +16,6 @@ namespace EPICSServerClient
     {
         public App()
         {
-            string appPath = Path.GetDirectoryName(this.GetType().Assembly.Location);
-            //ResourceAssembly = Assembly.LoadFrom(Path.Combine(appPath+ "\\MahApps.Metro.dll"));
-
             InitializeComponent();
         }
 
@@ -27,6 +24,14 @@ namespace EPICSServerClient
             base.OnStartup(e);
             Bootstrapper bootstrapper = new Bootstrapper();
             bootstrapper.Run();
+
+            using (var win = new HomeWindow())
+            {
+                win.Content = bootstrapper.GetShell();
+                win.Activate();
+                win.Focus();
+                win.ShowDialog();
+            }
         }
 
         public void Dispose()
@@ -35,14 +40,10 @@ namespace EPICSServerClient
         }
 
         [STAThreadAttribute]
-        public static int Main(string[] args)
+        public static void Main()
         {
             App app = new App();
-
-            app.InitializeComponent();
             app.Run();
-
-            return 0;
         }
 
     }

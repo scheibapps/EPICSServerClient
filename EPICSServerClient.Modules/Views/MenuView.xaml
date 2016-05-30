@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="EPICSServerClient.Modules.Views.MenuView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EPICSServerClient.Modules.Views"
+              xmlns:prism="http://www.codeplex.com/prism"
+              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+              mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="300" prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <Grid.Resources>
+            <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
+        </Grid.Resources>
+        <TabControl Name="MainMenu" SelectedIndex="{Binding Index, Mode=TwoWay}" ItemsSource="{Binding Tabs}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <prism:InvokeCommandAction Command="{Binding TabSelectedCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </TabControl>
+
+    </Grid>
+</UserControl>

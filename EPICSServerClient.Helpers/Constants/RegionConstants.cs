@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace EPICSServerClient.Helpers
+namespace EPICSServerClient.Helpers.Constants
 {
     public static class RegionConstants
     {

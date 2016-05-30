@@ -4,6 +4,10 @@ using Microsoft.Practices.ServiceLocation;
 using Prism.Modularity;
 using Prism.Unity;
 using EPICSServerClient.Views;
+using EPICSServerClient.Modules;
+using EPICSServerClient.Helpers.Regions;
+using Prism.Regions;
+using System.Windows.Controls;
 
 namespace EPICSServerClient
 {
@@ -18,20 +22,22 @@ namespace EPICSServerClient
         {
             base.InitializeShell();
 
-            Application.Current.MainWindow = (MetroWindow)this.Shell;
-            Application.Current.MainWindow.ShowDialog();
-
-            var shellWindow = (MetroWindow)this.Shell;
-
-            shellWindow.Activate();
-            shellWindow.Focus();
-            shellWindow.ShowDialog();
-
         }
 
         protected override void ConfigureContainer()
         {
             base.ConfigureContainer();
+            UnityConfig.ConfigureUnity(Container);
+        }
+
+        protected override RegionAdapterMappings ConfigureRegionAdapterMappings()
+        {
+            RegionAdapterMappings regionAdapterMappings = ServiceLocator.Current.GetInstance<RegionAdapterMappings>();
+            if (regionAdapterMappings != null)
+            {
+                regionAdapterMappings.RegisterMapping(typeof(ContentControl), ServiceLocator.Current.GetInstance<ContentControlRegionAdapter>());
+            }
+            return regionAdapterMappings;
         }
 
         protected override void ConfigureModuleCatalog()
@@ -39,12 +45,12 @@ namespace EPICSServerClient
             base.ConfigureModuleCatalog();
             var moduleCatalog = (ModuleCatalog)this.ModuleCatalog;
 
-           // moduleCatalog.AddModule(typeof(MainModule));
+            moduleCatalog.AddModule(typeof(MainModule));
         }
 
         public object GetShell()
         {
-            return  this.Shell;
+            return this.Shell;
         }
     }
 }
