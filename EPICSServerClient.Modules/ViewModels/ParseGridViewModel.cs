@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Prism.Regions;
 using System.Diagnostics;
+using EPICSServerClient.Modules.Views;
 
 namespace EPICSServerClient.Modules.ViewModels
 {
@@ -31,9 +32,14 @@ namespace EPICSServerClient.Modules.ViewModels
 
         public override void OnNavigatedFrom(NavigationContext navigationContext)
         {
-            ParseObjects.Clear();
-            PopulateParseData();
-            ParseData.PopulateDataGrid(null);
+            if (ParseData.AppId == String.Empty && ParseData.Url == String.Empty)
+                return;
+            else
+            {
+                ParseObjects.Clear();
+                PopulateParseData();
+                ParseData.PopulateDataGrid(null);
+            }
         }
 
         private void PopulateParseData()

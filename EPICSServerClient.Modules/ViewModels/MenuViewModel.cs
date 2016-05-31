@@ -26,9 +26,10 @@ namespace EPICSServerClient.Modules.ViewModels
         {
             this.ParseService = ParseService;
             this.RegionManager = RegionManager;
-            foreach(TabItem tab in ParseService.GetClasses())
-                Tabs.Add(tab);
             TabSelectedCommand = new DelegateCommand(MenuItemSelectionChanged);
+            Tabs.Add(new TabItem { Header = "Configuration" });
+            var uri = new Uri(typeof(ServerView).FullName, UriKind.Relative);
+            RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri);
         }
 
         public ObservableCollection<TabItem> Tabs
@@ -48,9 +49,42 @@ namespace EPICSServerClient.Modules.ViewModels
 
         private void MenuItemSelectionChanged()
         {
+            if (Index == -1)
+                return;
+            Uri uri = null;
+            if (Index == 0)
+            {
+                ParseData.CurrentClass = Tabs[Index].Header.ToString();
+                uri = new Uri(typeof(ServerView).FullName, UriKind.Relative);
+                RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri);
+                return;
+            }
+            if(Index == 1)
+            {
+                return;
+            }
             ParseData.CurrentClass = Tabs[Index].Header.ToString();
-            var uri = new Uri(typeof(ParseGridView).FullName, UriKind.Relative);
+            uri = new Uri(typeof(ParseGridView).FullName, UriKind.Relative);
             RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri);
+        }
+
+        private void PopulateTabs()
+        {
+            Tabs.Clear();
+            Tabs.Add(new TabItem { Header = "Configuration" });
+            Tabs.Add(new TabItem { Header = "New" });
+            foreach (TabItem tab in ParseService.GetClasses())
+                Tabs.Add(tab);
+        }
+
+        public override void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            if (ParseData.AppId == String.Empty && ParseData.AppId == String.Empty)
+                return;
+            else
+            {
+                PopulateTabs();
+            }
         }
     }
 }

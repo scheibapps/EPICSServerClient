@@ -15,7 +15,7 @@ namespace EPICSServerClient.Helpers.Clients
         public List<TabItem> GetClasses()
         {
             List<TabItem> Classes = new List<TabItem>();
-            var results = ParseData.RequestJArray("Classes");
+            var results = ParseData.RequestJArray("/classes/Classes");
             foreach (JObject result in results.Children<JObject>())
             {
                 foreach (JProperty data in result.Properties())
@@ -34,7 +34,7 @@ namespace EPICSServerClient.Helpers.Clients
         public List<ParseObject> GetClassObjects(string Class)
         {
             List<ParseObject> objects = new List<ParseObject>();
-            var results = ParseData.RequestJArray(Class);
+            var results = ParseData.RequestJArray("/classes/"+Class);
             foreach (JObject result in results.Children<JObject>())
             {
                 foreach (JProperty data in result.Properties())

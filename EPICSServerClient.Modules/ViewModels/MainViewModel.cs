@@ -1,4 +1,7 @@
-﻿using System;
+﻿using EPICSServerClient.Helpers.Constants;
+using EPICSServerClient.Modules.Views;
+using Prism.Regions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +11,9 @@ namespace EPICSServerClient.Modules.ViewModels
 {
     public class MainViewModel
     {
-        public MainViewModel()
+        public MainViewModel(IRegionManager RegionManager)
         {
-
+            ServerView serverView = new ServerView();
         }
     }
 }
