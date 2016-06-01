@@ -54,32 +54,36 @@ namespace EPICSServerClient.Modules.ViewModels
             Uri uri = null;
             if (Index == 0)
             {
-                ParseData.CurrentClass = Tabs[Index].Header.ToString();
                 uri = new Uri(typeof(ServerView).FullName, UriKind.Relative);
                 RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri);
                 return;
             }
-            if(Index == 1)
-            {
-                return;
-            }
             ParseData.CurrentClass = Tabs[Index].Header.ToString();
+            NavigationParameters navParms = new NavigationParameters();
+            navParms.Add("Class", ParseService.GetClassObjects(ParseData.CurrentClass));
             uri = new Uri(typeof(ParseGridView).FullName, UriKind.Relative);
-            RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri);
+            RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri, navParms);
         }
 
         private void PopulateTabs()
         {
             Tabs.Clear();
             Tabs.Add(new TabItem { Header = "Configuration" });
-            Tabs.Add(new TabItem { Header = "New" });
+            var tabs = ParseService.GetClasses();
+            if (tabs == null)
+            {
+                var uri = new Uri(typeof(ServerView).FullName, UriKind.Relative);
+                RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri);
+                return;
+            }
+            Tabs.Add(new TabItem { Header = "Classes" });
             foreach (TabItem tab in ParseService.GetClasses())
                 Tabs.Add(tab);
         }
 
         public override void OnNavigatedTo(NavigationContext navigationContext)
         {
-            if (ParseData.AppId == String.Empty && ParseData.AppId == String.Empty)
+            if (ParseData.AppId == String.Empty && ParseData.Url == String.Empty && ParseData.ErrorMessage != String.Empty)
                 return;
             else
             {

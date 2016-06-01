@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
@@ -7,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace EPICSServerClient.Helpers.Models
 {
-    public class ParseObject : DynamicObject
+    public class PFObject : DynamicObject, INotifyPropertyChanged
     {
         private readonly IList<Property> _properties;
 
-        public ParseObject()
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public PFObject()
         {
             _properties = new List<Property>();
         }
@@ -26,6 +29,7 @@ namespace EPICSServerClient.Helpers.Models
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
             _properties.First(p => p.Name.Equals(binder.Name)).Value = value;
+            NotifyPropertyChanged(binder.Name);
             return true;
         }
 
@@ -54,11 +58,18 @@ namespace EPICSServerClient.Helpers.Models
         public void SetPropertyValue(string propertyName, object value)
         {
             _properties.First(p => p.Name.Equals(propertyName)).Value = value;
+            NotifyPropertyChanged(propertyName);
         }
 
         public object GetPropertyValue(string propertyName)
         {
             return _properties.First(p => p.Name.Equals(propertyName)).Value;
+        }
+
+        private void NotifyPropertyChanged(String info)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
         }
     }
 

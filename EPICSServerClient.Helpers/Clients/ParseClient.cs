@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Net;
 using System.Windows.Controls;
 
 namespace EPICSServerClient.Helpers.Clients
@@ -15,7 +16,10 @@ namespace EPICSServerClient.Helpers.Clients
         public List<TabItem> GetClasses()
         {
             List<TabItem> Classes = new List<TabItem>();
-            var results = ParseData.RequestJArray("/classes/Classes");
+            var classUrl = "/classes/Classes";
+            var results = ParseData.HttpGet(classUrl);
+            if (results == null)
+                return null;
             foreach (JObject result in results.Children<JObject>())
             {
                 foreach (JProperty data in result.Properties())
@@ -31,17 +35,20 @@ namespace EPICSServerClient.Helpers.Clients
             return Classes;
         }
 
-        public List<ParseObject> GetClassObjects(string Class)
+        public List<PFObject> GetClassObjects(string Class)
         {
-            List<ParseObject> objects = new List<ParseObject>();
-            var results = ParseData.RequestJArray("/classes/"+Class);
+            List<PFObject> objects = new List<PFObject>();
+            var classUrl = "/classes/" + Class;
+            var results = ParseData.HttpGet(classUrl);
+            if (results == null)
+                return null;
             foreach (JObject result in results.Children<JObject>())
             {
                 foreach (JProperty data in result.Properties())
                 {
                     foreach (JObject obj in data.Values())
                     {
-                        ParseObject parseObject = new ParseObject();
+                        PFObject parseObject = new PFObject();
                         foreach (JProperty prop in obj.Properties())
                             parseObject.AddProperty(prop.Name.ToString(), prop.Value.ToString());
                         objects.Add(parseObject);
@@ -49,6 +56,18 @@ namespace EPICSServerClient.Helpers.Clients
                 }
             }
             return objects;
+        }
+
+        public string PostClassObject(string Class,PFObject obj)
+        {
+            var classUrl = "/classes/" + Class;
+            return ParseData.HttpPost(classUrl, obj);
+        }
+
+        public void DeleteClassObject(string Class, PFObject obj)
+        {
+            var classUrl = "/classes/" + Class;
+            ParseData.HttpDelete(classUrl, obj);
         }
 
     }

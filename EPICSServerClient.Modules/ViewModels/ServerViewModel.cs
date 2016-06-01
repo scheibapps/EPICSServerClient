@@ -1,10 +1,12 @@
 ﻿using EPICSServerClient.Helpers.Constants;
 using EPICSServerClient.Helpers.Data;
+using EPICSServerClient.Helpers.Models;
 using EPICSServerClient.Modules.Views;
 using Prism.Commands;
 using Prism.Regions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -16,6 +18,8 @@ namespace EPICSServerClient.Modules.ViewModels
     {
         private IRegionManager RegionManager;
         private DelegateCommand<Object> saveCommand;
+        private DelegateCommand<Connection> connectionCommand;
+        private ObservableCollection<Connection> connections = new ObservableCollection<Connection>();
         private string databaseName = String.Empty;
         private string url = String.Empty;
         private string appId = String.Empty;
@@ -24,12 +28,31 @@ namespace EPICSServerClient.Modules.ViewModels
         {
             this.RegionManager = RegionManager;
             SaveCommand = new DelegateCommand<Object>(SaveParseServerInformation,CanSave);
+            ConnectionCommand = new DelegateCommand<Connection>(PopulateConnection);
+            PopulateConnections();
         }
 
         public DelegateCommand<object> SaveCommand
         {
             get { return saveCommand; }
             set { saveCommand = value; }
+        }
+
+        public DelegateCommand<Connection> ConnectionCommand
+        {
+            get { return connectionCommand; }
+            set { connectionCommand = value; }
+        }
+
+        public ObservableCollection<Connection> Connections
+        {
+            get { return connections; }
+            set { connections = value; }
+        }
+
+        public string ErrorMessage
+        {
+            get { return ParseData.ErrorMessage; }
         }
 
         public string DatabaseName
@@ -40,6 +63,7 @@ namespace EPICSServerClient.Modules.ViewModels
                 SaveCommand.RaiseCanExecuteChanged();
             }
         }
+
         public string Url
         {
             get { return url; }
@@ -49,6 +73,7 @@ namespace EPICSServerClient.Modules.ViewModels
                 SaveCommand.RaiseCanExecuteChanged();
             }
         }
+
         public string AppId
         {
             get { return appId; }
@@ -63,6 +88,15 @@ namespace EPICSServerClient.Modules.ViewModels
         {
             ParseData.AppId = AppId;
             ParseData.Url = Url;
+            var connection = new Connection()
+            {
+                DatabaseName = DatabaseName,
+                Url = Url,
+                AppId = AppId
+            };
+            if (!ConnectionData.Connections.Contains(connection))
+                ConnectionData.Connections.Add(connection);
+            ConnectionData.ConvertConnectionsToXml();
             var uri = new Uri(typeof(MenuView).FullName, UriKind.Relative);
             RegionManager.RequestNavigate(RegionConstants.MenuRegion, uri);
         }
@@ -70,6 +104,24 @@ namespace EPICSServerClient.Modules.ViewModels
         private bool CanSave(object parm)
         {
             return (AppId != String.Empty && Url != String.Empty && DatabaseName != String.Empty) ? true : false;
+        }
+
+        private void PopulateConnections()
+        {
+            foreach(Connection connection in ConnectionData.ConvertXmlToConnections())
+            {
+                Connections.Add(connection);
+            }
+        }
+
+        private void PopulateConnection(Connection connection)
+        {
+            DatabaseName = connection.DatabaseName;
+            Url = connection.Url;
+            AppId = connection.AppId;
+            OnPropertyChanged("DatabaseName");
+            OnPropertyChanged("Url");
+            OnPropertyChanged("AppId");
         }
     }
 }

@@ -11,6 +11,8 @@ namespace EPICSServerClient.Helpers.Services
     public interface IParseService
     {
         List<TabItem> GetClasses();
-        List<ParseObject> GetClassObjects(string Class);
+        List<PFObject> GetClassObjects(string Class);
+        string PostClassObject(string Class, PFObject obj);
+        void DeleteClassObject(string Class, PFObject obj);
     }
 }
