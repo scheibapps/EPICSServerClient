@@ -8,5 +8,5 @@
         mc:Ignorable="d"
        Title="EPICS Server Client" Height="600" Width="900" BorderThickness="1" ResizeMode="CanResizeWithGrip" 
                       BorderBrush="{DynamicResource AccentColorBrush}" ShowMinButton="False" ShowMaxRestoreButton="False"
-                      TitleCaps="False">
+                      TitleCaps="False" Icon="Resources/scheibapps.ico">
 </controls:MetroWindow>

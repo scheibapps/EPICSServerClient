@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
@@ -28,14 +29,28 @@ namespace EPICSServerClient.Helpers.Models
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            _properties.First(p => p.Name.Equals(binder.Name)).Value = value;
+            try
+            {
+                _properties.First(p => p.Name.Equals(binder.Name)).Value = value;
+            } catch(Exception e)
+            {
+                AddProperty(binder.Name, value);
+                Debug.WriteLine(e.Message + " : Property auto-assigned");
+            }
             NotifyPropertyChanged(binder.Name);
             return true;
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            result = _properties.FirstOrDefault(p => p.Name.Equals(binder.Name)).Value;
+            try
+            {
+                result = _properties.FirstOrDefault(p => p.Name.Equals(binder.Name)).Value.ToString();
+            } catch (Exception e)
+            {
+                Debug.WriteLine(e.Message + " : Value may be null");
+                result = String.Empty;
+            }
             return true;
         }
 
@@ -73,9 +88,32 @@ namespace EPICSServerClient.Helpers.Models
         }
     }
 
-    public class Property
+    public class Property : IEquatable<Property>, IEqualityComparer<Property>
     {
         public string Name { get; set; }
         public object Value { get; set; }
+
+        public bool Equals(Property x, Property y)
+        {
+            if (x == null || y == null)
+                return false;
+            if (x.Name == y.Name)
+                return true;
+            return false;
+        }
+
+        public int GetHashCode(Property obj)
+        {
+            return obj.GetHashCode();
+        }
+
+        public bool Equals(Property other)
+        {
+            if (other == null)
+                return false;
+            if (this.Name == other.Name)
+                return true;
+            return false;
+        }
     }
 }

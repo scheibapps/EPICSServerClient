@@ -16,7 +16,7 @@ namespace EPICSServerClient.Helpers.Clients
         public List<TabItem> GetClasses()
         {
             List<TabItem> Classes = new List<TabItem>();
-            var classUrl = "/classes/Classes";
+            var classUrl = "/classes/Class";
             var results = ParseData.HttpGet(classUrl);
             if (results == null)
                 return null;
@@ -53,9 +53,31 @@ namespace EPICSServerClient.Helpers.Clients
                             parseObject.AddProperty(prop.Name.ToString(), prop.Value.ToString());
                         objects.Add(parseObject);
                     }
+                    if(objects.Count < 1)
+                    {
+                        PFObject obj = new PFObject();
+                        obj.AddProperty("objectId", String.Empty);
+                        obj.AddProperty("sampleColumn", "sampleData");
+                        var objectId = PostClassObject(ParseData.CurrentClass, obj);
+                        if (objectId != String.Empty)
+                            obj.SetPropertyValue("objectId", objectId);
+                        objects.Add(obj);
+                    }
                 }
             }
             return objects;
+        }
+
+        public string CheckForClass(string Class)
+        {
+            var classUrl = "/classes/"+Class;
+            return ParseData.HttpTestClass(classUrl);
+        }
+
+        public string CreateClass(string Class)
+        {
+            var classUrl = "/classes/" + Class;
+            return ParseData.HttpTestObject(classUrl);
         }
 
         public string PostClassObject(string Class,PFObject obj)
@@ -68,6 +90,12 @@ namespace EPICSServerClient.Helpers.Clients
         {
             var classUrl = "/classes/" + Class;
             ParseData.HttpDelete(classUrl, obj);
+        }
+
+        public string UpdateOnDelete(string Class, PFObject obj)
+        {
+            var classUrl = "/classes/" + Class;
+            return ParseData.HttpUpdateOnDelete(classUrl, obj);
         }
 
     }

@@ -24,6 +24,51 @@ namespace EPICSServerClient.Helpers.Data
         public static string ErrorMessage = String.Empty;
         public static DataGrid dataGrid;
 
+        public static string HttpTestClass(string Class)
+        {
+            try
+            {
+                WebRequest request = WebRequest.Create(Url + Class + "?limit=1");
+                request.Method = "GET";
+                request.Headers["X-Parse-Application-Id"] = AppId;
+                request.ContentType = "application/json";
+                var response = (HttpWebResponse)request.GetResponse();
+                if(response.StatusCode == HttpStatusCode.OK)
+                {
+                    var results = ParseData.HttpGet(Class);
+                    if (results == null)
+                        return HttpStatusCode.NotImplemented.ToString();
+                        foreach (JObject result in results.Children<JObject>())
+                        {
+                            foreach (JProperty data in result.Properties())
+                            {
+                                if(JArray.Parse(data.Value.ToString()).Children<JObject>().Count() < 1)
+                                    return HttpStatusCode.NotImplemented.ToString();
+                            }
+                        }
+                }
+                return response.StatusCode.ToString();
+            } catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public static string HttpTestObject(string Class)
+        {
+            try
+            {
+                PFObject obj = new PFObject();
+                obj.AddProperty("objectId", String.Empty);
+                obj.AddProperty("name", "Class");
+                return HttpPost(Class, obj);
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
         public static string HttpPost(string Class, PFObject obj)
         {
             try
@@ -31,7 +76,7 @@ namespace EPICSServerClient.Helpers.Data
                 PFObject jsonObj = new PFObject();
                 List<Property> props = obj.Properties.Where(p =>
                 {
-                    if (p.Name == "objectId")
+                    if (p.Name == "objectId" || p.Name == "createdAt" || p.Name == "updatedAt")
                         return false;
                     return true;
                 }).ToList();
@@ -51,18 +96,25 @@ namespace EPICSServerClient.Helpers.Data
                 Stream dataStream = request.GetRequestStream();
                 dataStream.Write(bytes, 0, bytes.Length);
                 dataStream.Close();
-                WebResponse response = request.GetResponse();
+                var response = (HttpWebResponse)request.GetResponse();
+                request.Abort();
                 string objectId = String.Empty;
                 if (objId == String.Empty)
                 {
-                    string response_location = response.Headers["Location"].ToString();
-                    char[] response_char = response_location.ToCharArray();
-                    for (int i = 0; i < 10; i++)
+                    try
                     {
-                        objectId += response_char[response_char.Length - (10 - i)];
+                        string response_location = response.Headers["Location"].ToString();
+                        char[] response_char = response_location.ToCharArray();
+                        for (int i = 0; i < 10; i++)
+                        {
+                            objectId += response_char[response_char.Length - (10 - i)];
+                        }
+                    } catch(Exception e)
+                    {
+                        Debug.WriteLine(e.Message + " : Could not get the location header.");
+                        return "0000000000";
                     }
                 }
-                request.Abort();
                 return objectId;
             }catch (Exception e)
             {
@@ -95,6 +147,13 @@ namespace EPICSServerClient.Helpers.Data
             return null;
         }
 
+        public static string HttpUpdateOnDelete(string Class, PFObject obj)
+        {
+            HttpDelete(Class, obj);
+            obj.SetPropertyValue("objectId", String.Empty);
+            return HttpPost(Class, obj);
+        }
+
         public static void HttpDelete(string Class, PFObject obj)
         {
             var objId = obj.Properties.FirstOrDefault(o => o.Name == "objectId").Value.ToString();
@@ -120,18 +179,56 @@ namespace EPICSServerClient.Helpers.Data
             if (dg != null)
                 dataGrid = dg;
             dataGrid.Columns.Clear();
-            var first = dataGrid.ItemsSource.Cast<object>().FirstOrDefault() as PFObject;
-            if (first == null) return;
-            var props = first.Properties;
+            var objects = dataGrid.ItemsSource.Cast<PFObject>();
+            if (objects == null) return;
+            var props = new List<Property>();
+            foreach(var obj in objects)
+            {
+                foreach(var prop in obj.Properties)
+                {
+                    if (!props.Contains(prop))
+                        props.Add(prop);
+                }
+            }
             foreach (var prop in props)
             {
                 dataGrid.Columns.Add(new DataGridTextColumn
                 {
                     Header = prop.Name,
                     Binding = new Binding(prop.Name),
-                    IsReadOnly = (prop.Name == "objectId")
+                    IsReadOnly = (prop.Name == "objectId" || prop.Name == "createdAt" || prop.Name == "updatedAt")
                 });
             }
+        }
+
+        public static void AddDataGridColumn(string ColumnName)
+        {
+            if (dataGrid == null)
+                return;
+            dataGrid.Columns.Add(new DataGridTextColumn
+            {
+                Header = ColumnName,
+                Binding = new Binding(ColumnName)
+            });
+        }
+
+        public static bool DeleteDataGridColumn(string ColumnName)
+        {
+            if (dataGrid == null)
+                return false;
+            DataGridColumn column;
+            try
+            {
+                column = dataGrid.Columns.FirstOrDefault(c => c.Header.ToString() == ColumnName);
+            }
+            catch (Exception)
+            {
+                column = null;
+            }
+            if (column == null)
+                return false;
+            dataGrid.Columns.Remove(column);
+            return true;
         }
     }
 }

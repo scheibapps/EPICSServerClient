@@ -10,13 +10,36 @@
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:helpers="clr-namespace:EPICSServerClient.Helpers.Constants;assembly=ScheibApps.EPICSServerClient.Helpers"
              d:DesignHeight="600" d:DesignWidth="900" prism:ViewModelLocator.AutoWireViewModel="True">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <!-- Accent and AppTheme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <DockPanel Margin="5">
-        <WrapPanel DockPanel.Dock="Top" HorizontalAlignment="Right" Margin="0,0,0,5">
-            <Button Content="Add Column" Width="100" Margin="0,0,5,0"></Button>
-            <Button Content="Delete Row" Width="100" Margin="0,0,5,0" Command="{Binding DeleteRowCommand}"></Button>
-            <Button Content="Add Row" Width="100" Command="{Binding AddRowCommand}"></Button>
-            <Button Content="Save" Width="100" Margin="0,0,5,0" Command="{Binding SaveRowCommand}"></Button>
-        </WrapPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <WrapPanel Grid.Column="0"  HorizontalAlignment="Right" Margin="0,0,0,5">
+                <Button Content="Drop Class" Width="100" Margin="0,0,5,0" Style="{DynamicResource SquareButtonStyle}" Command="{Binding DropClassCommand}"></Button>
+            </WrapPanel>
+            <WrapPanel Grid.Column="1"  HorizontalAlignment="Right" Margin="0,0,0,5">
+                <Button Content="Delete Column" Width="100" Margin="0,0,5,0" Style="{DynamicResource SquareButtonStyle}" Command="{Binding DeleteColumnCommand}"></Button>
+                <Button Content="Add Column" Width="100" Margin="0,0,5,0" Style="{DynamicResource SquareButtonStyle}" Command="{Binding AddColumnCommand}"></Button>
+                <Button Content="Delete Row" Width="100" Margin="0,0,5,0" Style="{DynamicResource SquareButtonStyle}" Command="{Binding DeleteRowCommand}"></Button>
+                <Button Content="Add Row" Width="100" Margin="0,0,5,0" Style="{DynamicResource SquareButtonStyle}" Command="{Binding AddRowCommand}"></Button>
+                <Button Content="Save" Width="100" Style="{DynamicResource SquareButtonStyle}" Command="{Binding SaveRowCommand}"></Button>
+            </WrapPanel>
+        </Grid>
         <Grid DockPanel.Dock="Bottom">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>

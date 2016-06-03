@@ -10,16 +10,30 @@
               mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="300" prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
         <Grid.Resources>
-            <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
+                    <ResourceDictionary Source="/ScheibApps.EPICSServerClient.Modules;component/Resources/Icons.xaml"/>
+                    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
         </Grid.Resources>
-        <TabControl Name="MainMenu" SelectedIndex="{Binding Index, Mode=TwoWay}" ItemsSource="{Binding Tabs}">
+        <TabControl Grid.Column="0" Name="MainMenu" SelectedIndex="{Binding Index, Mode=TwoWay}" ItemsSource="{Binding Tabs}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
                     <prism:InvokeCommandAction Command="{Binding TabSelectedCommand}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </TabControl>
-
+        <Button Grid.Column="1" Background="{DynamicResource AccentColorBrush}" Width="25" Height="25" Margin="5,0,5,0" Command="{Binding RefreshCommand}">
+            <Button.OpacityMask>
+                <VisualBrush Visual="{StaticResource appbar_refresh}" Stretch="Fill" />
+            </Button.OpacityMask>
+        </Button>
     </Grid>
 </UserControl>

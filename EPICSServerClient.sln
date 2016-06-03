@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPICSServerClient", "EPICSServerClient\EPICSServerClient.csproj", "{4FA5CD8D-BD4B-4E1A-9D43-22AA8ADDA417}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPICSServerClient.Modules", "EPICSServerClient.Modules\EPICSServerClient.Modules.csproj", "{DE0E14D5-A275-47A4-83E7-C05D0F45F7ED}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPICSServerClient.Helpers", "EPICSServerClient.Helpers\EPICSServerClient.Helpers.csproj", "{F2F5C416-A6CB-4A41-92A1-53C244D2EE46}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{80256A80-7A12-4D6C-BFAA-8B25B4AE1792}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,8 @@ Global
 		{F2F5C416-A6CB-4A41-92A1-53C244D2EE46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2F5C416-A6CB-4A41-92A1-53C244D2EE46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2F5C416-A6CB-4A41-92A1-53C244D2EE46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80256A80-7A12-4D6C-BFAA-8B25B4AE1792}.Debug|Any CPU.ActiveCfg = Debug
+		{80256A80-7A12-4D6C-BFAA-8B25B4AE1792}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

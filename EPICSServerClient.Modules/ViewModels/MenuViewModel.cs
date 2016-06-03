@@ -27,6 +27,7 @@ namespace EPICSServerClient.Modules.ViewModels
             this.ParseService = ParseService;
             this.RegionManager = RegionManager;
             TabSelectedCommand = new DelegateCommand(MenuItemSelectionChanged);
+            RefreshCommand = new DelegateCommand(RefreshTabs);
             Tabs.Add(new TabItem { Header = "Configuration" });
             var uri = new Uri(typeof(ServerView).FullName, UriKind.Relative);
             RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri);
@@ -37,6 +38,8 @@ namespace EPICSServerClient.Modules.ViewModels
             get { return tabs; }
             set { tabs = value; }
         }
+
+        public DelegateCommand RefreshCommand { get; set; }
 
 
         public DelegateCommand TabSelectedCommand { get; set; }
@@ -65,6 +68,11 @@ namespace EPICSServerClient.Modules.ViewModels
             RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri, navParms);
         }
 
+        private void RefreshTabs()
+        {
+            PopulateTabs();
+        }
+
         private void PopulateTabs()
         {
             Tabs.Clear();
@@ -76,7 +84,6 @@ namespace EPICSServerClient.Modules.ViewModels
                 RegionManager.RequestNavigate(RegionConstants.ContentRegion, uri);
                 return;
             }
-            Tabs.Add(new TabItem { Header = "Classes" });
             foreach (TabItem tab in ParseService.GetClasses())
                 Tabs.Add(tab);
         }
